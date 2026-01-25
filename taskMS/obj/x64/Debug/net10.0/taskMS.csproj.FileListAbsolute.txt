@@ -1,0 +1,14 @@
+C:\Users\Acer\OneDrive\Documents\C#Class\taskMS\bin\x64\Debug\net10.0\taskMS.exe
+C:\Users\Acer\OneDrive\Documents\C#Class\taskMS\bin\x64\Debug\net10.0\taskMS.deps.json
+C:\Users\Acer\OneDrive\Documents\C#Class\taskMS\bin\x64\Debug\net10.0\taskMS.runtimeconfig.json
+C:\Users\Acer\OneDrive\Documents\C#Class\taskMS\bin\x64\Debug\net10.0\taskMS.dll
+C:\Users\Acer\OneDrive\Documents\C#Class\taskMS\bin\x64\Debug\net10.0\taskMS.pdb
+C:\Users\Acer\OneDrive\Documents\C#Class\taskMS\obj\x64\Debug\net10.0\taskMS.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Acer\OneDrive\Documents\C#Class\taskMS\obj\x64\Debug\net10.0\taskMS.AssemblyInfoInputs.cache
+C:\Users\Acer\OneDrive\Documents\C#Class\taskMS\obj\x64\Debug\net10.0\taskMS.AssemblyInfo.cs
+C:\Users\Acer\OneDrive\Documents\C#Class\taskMS\obj\x64\Debug\net10.0\taskMS.csproj.CoreCompileInputs.cache
+C:\Users\Acer\OneDrive\Documents\C#Class\taskMS\obj\x64\Debug\net10.0\taskMS.dll
+C:\Users\Acer\OneDrive\Documents\C#Class\taskMS\obj\x64\Debug\net10.0\refint\taskMS.dll
+C:\Users\Acer\OneDrive\Documents\C#Class\taskMS\obj\x64\Debug\net10.0\taskMS.pdb
+C:\Users\Acer\OneDrive\Documents\C#Class\taskMS\obj\x64\Debug\net10.0\taskMS.genruntimeconfig.cache
+C:\Users\Acer\OneDrive\Documents\C#Class\taskMS\obj\x64\Debug\net10.0\ref\taskMS.dll
