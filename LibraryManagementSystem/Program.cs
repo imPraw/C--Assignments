@@ -1,190 +1,206 @@
 ﻿using System;
-using System.Collections.Generic;
+using LibraryManagementSystem.Services;
+using LibraryManagementSystem.Models;
+using LibraryManagementSystem.CustomException;
 
 namespace LibraryManagementSystem
 {
-    // Custom exception for invalid item data
-    class InvalidItemDataException : Exception
-    {
-        public InvalidItemDataException(string message) : base(message) { }
-    }
-
-    // Custom exception for duplicate items
-    class DuplicateItemException : Exception
-    {
-        public DuplicateItemException(string message) : base(message) { }
-    }
-
-    // Base class representing a library item
-    class Item
-    {
-        private string title;
-        private string publisher;
-        private int publicationYear;
-
-        public string Title
-        {
-            get { return title; }
-            set
-            {
-                if (string.IsNullOrWhiteSpace(value))
-                    throw new InvalidItemDataException("Title cannot be empty.");
-                title = value;
-            }
-        }
-
-        public string Publisher
-        {
-            get { return publisher; }
-            set
-            {
-                if (string.IsNullOrWhiteSpace(value))
-                    throw new InvalidItemDataException("Publisher cannot be empty.");
-                publisher = value;
-            }
-        }
-
-        public int PublicationYear
-        {
-            get { return publicationYear; }
-            set
-            {
-                if (value <= 0)
-                    throw new InvalidItemDataException("Publication year must be a positive number.");
-                publicationYear = value;
-            }
-        }
-
-        // Virtual method to demonstrate polymorphism
-        public virtual void DisplayInfo()
-        {
-            Console.WriteLine($"Title: {Title}");
-            Console.WriteLine($"Publisher: {Publisher}");
-            Console.WriteLine($"Year: {PublicationYear}");
-        }
-    }
-
-    // Derived class for books
-    class Book : Item
-    {
-        private string author;
-
-        public string Author
-        {
-            get { return author; }
-            set
-            {
-                if (string.IsNullOrWhiteSpace(value))
-                    throw new InvalidItemDataException("Author name cannot be empty.");
-                author = value;
-            }
-        }
-
-        // Overriding base class method
-        public override void DisplayInfo()
-        {
-            Console.WriteLine("Item Type: Book");
-            base.DisplayInfo();
-            Console.WriteLine($"Author: {Author}");
-            Console.WriteLine();
-        }
-    }
-
-    // Derived class for magazines
-    class Magazine : Item
-    {
-        private int issueNumber;
-
-        public int IssueNumber
-        {
-            get { return issueNumber; }
-            set
-            {
-                if (value <= 0)
-                    throw new InvalidItemDataException("Issue number must be a positive number.");
-                issueNumber = value;
-            }
-        }
-
-        // Overriding base class method
-        public override void DisplayInfo()
-        {
-            Console.WriteLine("Item Type: Magazine");
-            base.DisplayInfo();
-            Console.WriteLine($"Issue Number: {IssueNumber}");
-            Console.WriteLine();
-        }
-    }
-
     class Program
     {
+        private static LibraryServices Library;
+
         static void Main(string[] args)
         {
-            // List to store library items
-            List<Item> libraryItems = new List<Item>();
+            Library = new LibraryServices();
 
+            bool exit = false;
+            while (!exit)
+            {
+                DisplayMenu();
+                string choice = Console.ReadLine();
+                exit = HandleMenuChoice(choice);
+            }
+        }
+
+        // ---------------- MENU ----------------
+
+        private static void DisplayMenu()
+        {
+            Console.WriteLine("\n===== Library Management System =====");
+            Console.WriteLine("1. Add Book");
+            Console.WriteLine("2. Add Magazine");
+            Console.WriteLine("3. Add Newspaper");
+            Console.WriteLine("4. List Items");
+            Console.WriteLine("5. Search by Title");
+            Console.WriteLine("6. Search by Author");
+            Console.WriteLine("7. Sort by Title");
+            Console.WriteLine("8. Sort by Year");
+            Console.WriteLine("9. Remove Item");
+            Console.WriteLine("0. Exit");
+            Console.Write("Enter choice: ");
+        }
+
+        // ---------------- MENU HANDLER ----------------
+
+        private static bool HandleMenuChoice(string choice)
+        {
             try
             {
-                // Creating a book object
-                Book book1 = new Book
+                return choice switch
                 {
-                    Title = "C# Programming",
-                    Publisher = "Tech Press",
-                    PublicationYear = 2022,
-                    Author = "John Smith"
+                    "1" => ExecuteAddBook(),
+                    "2" => ExecuteAddMagazine(),
+                    "3" => ExecuteAddNewspaper(),
+                    "4" => ExecuteListItems(),
+                    "5" => ExecuteSearchByTitle(),
+                    "6" => ExecuteSearchByAuthor(),
+                    "7" => ExecuteSortByTitle(),
+                    "8" => ExecuteSortByYear(),
+                    "9" => ExecuteRemoveItem(),
+                    "0" => ExecuteExit(),
+                    _   => ExecuteInvalidChoice()
                 };
-
-                AddItem(libraryItems, book1);
-
-                // Creating a magazine object
-                Magazine mag1 = new Magazine
-                {
-                    Title = "Tech Monthly",
-                    Publisher = "Future Media",
-                    PublicationYear = 2023,
-                    IssueNumber = 5
-                };
-
-                AddItem(libraryItems, mag1);
-
-                // Displaying all items using polymorphism
-                Console.WriteLine("Library Items:\n");
-                foreach (Item item in libraryItems)
-                {
-                    item.DisplayInfo();
-                }
             }
             catch (InvalidItemDataException ex)
             {
-                Console.WriteLine("Input Error: " + ex.Message);
+                Console.WriteLine($"Input Error: {ex.Message}");
+                return false;
             }
             catch (DuplicateItemException ex)
             {
-                Console.WriteLine("Duplicate Error: " + ex.Message);
+                Console.WriteLine($"Duplicate Error: {ex.Message}");
+                return false;
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Unexpected Error: " + ex.Message);
+                Console.WriteLine($"Unexpected Error: {ex.Message}");
+                return false;
             }
-            finally
-            {
-                // This block always executes
-                Console.WriteLine("Program execution completed.");
-            }
-
-            Console.ReadLine();
         }
 
-        // Method to add items and prevent duplicates
-        static void AddItem(List<Item> items, Item newItem)
-        {
-            foreach (Item item in items)
-            {
-                if (item.Title == newItem.Title)
-                    throw new DuplicateItemException("An item with the same title already exists.");
-            }
+        // ---------------- EXECUTE METHODS ----------------
 
-            items.Add(newItem);
+        private static bool ExecuteAddBook()
+        {
+            Book book = new Book
+            {
+                Title = GetInput("Title"),
+                Publisher = GetInput("Publisher"),
+                PublicationYear = GetIntInput("Publication Year"),
+                Author = GetInput("Author")
+            };
+
+            Library.AddItem(book);
+            Console.WriteLine("Book added.");
+            return false;
+        }
+
+        private static bool ExecuteAddMagazine()
+        {
+            Magazine magazine = new Magazine
+            {
+                Title = GetInput("Title"),
+                Publisher = GetInput("Publisher"),
+                PublicationYear = GetIntInput("Publication Year"),
+                IssueNumber = GetIntInput("Issue Number")
+            };
+
+            Library.AddItem(magazine);
+            Console.WriteLine("Magazine added.");
+            return false;
+        }
+
+        private static bool ExecuteAddNewspaper()
+        {
+            Newspaper newspaper = new Newspaper
+            {
+                Title = GetInput("Title"),
+                Publisher = GetInput("Publisher"),
+                PublicationYear = GetIntInput("Publication Year"),
+                Editor = GetInput("Editor")
+            };
+
+            Library.AddItem(newspaper);
+            Console.WriteLine("Newspaper added.");
+            return false;
+        }
+
+        private static bool ExecuteListItems()
+        {
+            Library.ListItems();
+            return false;
+        }
+
+        private static bool ExecuteSearchByTitle()
+        {
+            string title = GetInput("Enter title");
+            var results = Library.Search(title);
+
+            foreach (var item in results)
+                item.DisplayInfo();
+
+            return false;
+        }
+
+        private static bool ExecuteSearchByAuthor()
+        {
+            string author = GetInput("Enter author");
+            var results = Library.Search(author);
+
+            foreach (var item in results)
+                item.DisplayInfo();
+
+            return false;
+        }
+
+        private static bool ExecuteSortByTitle()
+        {
+            foreach (var item in Library.SortByTitle())
+                item.DisplayInfo();
+
+            return false;
+        }
+
+        private static bool ExecuteSortByYear()
+        {
+            foreach (var item in Library.SortByYear())
+                item.DisplayInfo();
+
+            return false;
+        }
+
+        private static bool ExecuteRemoveItem()
+        {
+            string title = GetInput("Enter title to remove");
+            Library.RemoveItem(title);
+            Console.WriteLine("Item removed (if found).");
+            return false;
+        }
+
+        private static bool ExecuteExit()
+        {
+            Console.WriteLine("Exiting application...");
+            return true;
+        }
+
+        private static bool ExecuteInvalidChoice()
+        {
+            Console.WriteLine("Invalid choice.");
+            return false;
+        }
+
+        // ---------------- INPUT HELPERS ----------------
+
+        private static string GetInput(string prompt)
+        {
+            Console.Write($"{prompt}: ");
+            return Console.ReadLine();
+        }
+
+        private static int GetIntInput(string prompt)
+        {
+            Console.Write($"{prompt}: ");
+            return int.Parse(Console.ReadLine());
         }
     }
 }

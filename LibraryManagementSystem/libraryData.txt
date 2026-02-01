@@ -1,0 +1,3 @@
+Book,The Meditations,Punguins,2005,Marcus Aureleus
+Magazine,the forbes,1999,2005,23
+Newspaper,The Guardians,Dawn,5000,Praw
